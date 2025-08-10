@@ -17,7 +17,7 @@ using json = nlohmann::json;
 #define OUTPUT_TYPE_BOOL "bool"
 
 // default guest attestation url
-std::string default_attestation_url = "https://sharedeus2.eus2.attest.azure.net/";
+std::string default_attestation_url = "https://testattestation.jpe.attest.azure.net";
 
 #ifndef PLATFORM_UNIX
 static char* optarg = nullptr;
