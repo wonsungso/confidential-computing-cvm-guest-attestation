@@ -2,28 +2,31 @@
 #include <stdarg.h>
 #include <vector>
 #include <AttestationClient.h>
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <thread>
 #include <boost/algorithm/string.hpp>
-#include <nlohmann/json.hpp>
 #include "Utils.h"
 #include "Logger.h"
 using json = nlohmann::json;
 
-
-#define OUTPUT_TYPE_JWT "token"
-#define OUTPUT_TYPE_BOOL "bool"
+#define OUTPUT_TYPE_JWT "TOKEN"
+#define OUTPUT_TYPE_BOOL "BOOL"
 
 // default guest attestation url
-std::string default_attestation_url = "https://sharedeus2.eus2.attest.azure.net/";
-// std::string default_attestation_url = "https://testattestation.jpe.attest.azure.net";
-
+std::string default_attestation_url = "https://sharedkrc.krc.attest.azure.net/";
 
 #ifndef PLATFORM_UNIX
 static char* optarg = nullptr;
 static int optind = 1;
+
+/*
+* The getopt() function parses the command - line arguments.Its
+* arguments argc and argv are the argument count and array as passed to
+* the main() function on program invocation
+*/
 static int getopt(int argc, char* const argv[], const char* optstring)
 {
     //Error and -1 returns are the same as for getopt(), plus '?'
@@ -60,7 +63,7 @@ static int getopt(int argc, char* const argv[], const char* optstring)
 #endif //!PLATFORM_UNIX
 
 void usage(char* programName) {
-    printf("Usage: %s -a <attestation-endpoint> -n <nonce> -o <%s|%s>\n", programName, OUTPUT_TYPE_BOOL, OUTPUT_TYPE_JWT);
+    printf("Usage: %s -a <attestation-endpoint> -n <nonce> -o JWT\n", programName);
 }
 
 int main(int argc, char* argv[]) {
@@ -127,7 +130,7 @@ int main(int argc, char* argv[]) {
                 != attest::AttestationResult::ErrorCode::SUCCESS) {
             attestation_success = false;
         }
-	
+
         if (attestation_success) {
             jwt_str = reinterpret_cast<char*>(jwt);
             attestation_client->Free(jwt);
@@ -159,7 +162,6 @@ int main(int argc, char* argv[]) {
         else {
             printf("%s", is_cvm ? "true" : "false");
         }
-
         Uninitialize();
     }
     catch (std::exception& e) {

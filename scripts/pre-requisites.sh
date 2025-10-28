@@ -31,6 +31,7 @@ sudo apt-get install -y --fix-missing \
     cmake \
     git \
     zip \
+    jq \
     uuid-dev \
     libjson-c-dev \
     libarchive-dev \
