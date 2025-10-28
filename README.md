@@ -1,7 +1,6 @@
 # Azure Confidential VM Guest Attestation Workshop
 
-이 워크샵은 **Azure Confidential VM (AMD SEV-SNP, Intel TDX)** 환경 게스트 OS 내부에서  
-**Microsoft Azure Attestation (MAA)** 서비스를 이용하여 **CVM의 무결성을 증명(Attestation)** 하는 과정을 실습하는 예제입니다.
+이 워크샵은 **Azure Confidential VM (AMD SEV-SNP, Intel TDX)** 환경 게스트 OS 내부에서 **Microsoft Azure Attestation (MAA)** 서비스를 이용하여 **CVM의 무결성을 증명(Attestation)** 하는 과정을 실습하는 예제입니다.
 
 > 본 워크샵은 [Azure/confidential-computing-cvm-guest-attestation](https://github.com/Azure/confidential-computing-cvm-guest-attestation) Repository 를 참고하였으며, **한국 리전 (Koreacentral)** 및 CVM Attestation에 집중하여 새로이 작성되었습니다.
 
@@ -83,6 +82,8 @@ sudo ./AttestationClient -o token; echo
 ```
 eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vc2hhcmVkZXVzMi5ldXMyLmF0dGVzdC5henVyZS5uZXQvY2VydHMiLCJraWQiOiJKMHBBUGRmWFh...
 ```
+
+> 이 명령은 CVM 내부에서 **Guest Attestation Report** 를 생성하고,이를 **Microsoft Azure Attestation(MAA)** 서비스에 전송하여 MAA가 서명한 **JWT 토큰(JSON Web Token)** 을 반환합니다.
 ---
 
 ## 5단계 – JWT 페이로드 디코드 및 파싱
@@ -104,6 +105,23 @@ sudo ./AttestationClient -o token | cut -d '.' -f2 | base64 -d 2>/dev/null | jq 
   ...
 }
 ```
+
+> 이 명령은 JWT의 **Payload(Base64 encoded)** 부분을 디코드하여 JSON 형태로 출력합니다.
+
+#### 주요 필드 해석
+
+| 필드 | 설명 |
+|------|------|
+| `iss` | 토큰 발급자 (MAA 엔드포인트 URL) |
+| `x-ms-attestation-type` | 어테스테이션 유형 (`azurenvm` = Confidential VM) |
+| `x-ms-azurevm-vmid` | VM 인스턴스 고유 ID |
+| `x-ms-sevsnpvm-bootloader-svn` | SEV-SNP 부트로더 보안 버전 |
+| `x-ms-sevsnpvm-firmware-svn` | SEV-SNP 펌웨어 버전 |
+| `x-ms-sevsnpvm-reportid` | 어테스테이션 세션 고유 ID |
+| `exp`, `nbf` | 토큰 유효기간 (UNIX timestamp) |
+
+> 이 디코드 된 토큰은 외부 서비스(API Gateway, Policy Server 등)에 제출하여 “이 요청이 신뢰된 Confidential VM에서 발급된 것임”을 증명하는 데 사용할 수 있습니다.
+
 ---
 
 ## 리소스 정리
