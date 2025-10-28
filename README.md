@@ -1,4 +1,4 @@
-# Azure Confidential VM Guest Attestation Workshop
+# Azure Confidential VM Guest Attestation 실습
 
 이 워크샵은 **Azure Confidential VM (AMD SEV-SNP, Intel TDX)** 환경 게스트 OS 내부에서 **Microsoft Azure Attestation (MAA)** 서비스를 이용하여 **CVM의 무결성을 증명(Attestation)** 하는 과정을 실습하는 예제입니다.
 
